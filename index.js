@@ -18,8 +18,9 @@ let notes = [
 const express = require('express')
 const cors = require('cors')
 const app = express()
+app.use(express.static('dist'))
 app.use(cors())
-
+app.use(express.json())
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
@@ -32,7 +33,13 @@ app.delete('/api/notes/:id', (request, response) => {
   notes = notes.filter(note => note.id !== id)
   response.status(204).end()
 })
-app.use(express.json())
+app.put('/api/notes/:id', (request, response) => {
+  const id = request.params.id
+  const responseNote = request.body
+  notes = notes.map(note => note.id !== id ? note : responseNote)
+  response.json(responseNote)
+})
+
 app.post('/api/notes', (request, response) => {
   const note = request.body
   console.log(note)
